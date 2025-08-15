@@ -20,7 +20,7 @@ describe('verifyKey', () => {
   it('should return false for non-object inputs', () => {
     expect(verifyKey(null)).toBe(false);
     expect(verifyKey(undefined)).toBe(false);
-    expect(verifyKey("a string")).toBe(false);
+    expect(verifyKey('a string')).toBe(false);
     expect(verifyKey(123)).toBe(false);
   });
 });
