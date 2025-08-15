@@ -86,14 +86,14 @@ const OcclusionVeils: React.FC<{ intensity?:number }> = ({ intensity=0.25 }) => 
     <g pointerEvents="none" style={{ mixBlendMode: 'screen' }} opacity={intensity}>
       <defs>
         <linearGradient id="veilA" x1="0" x2="1" y1="0" y2="1">
-          <stop offset="0%"  stopColor="hsl(210 90% 60%)" stopOpacity="0"/>
-          <stop offset="60%" stopColor="hsl(220 90% 65%)" stopOpacity="0.10}/>
-          <stop offset="100%" stopColor="hsl(260 90% 70%)" stopOpacity="0"/>
+          <stop offset="0"    stopColor="hsl(210 90% 60%)" stopOpacity="0" />
+          <stop offset="0.60" stopColor="hsl(220 90% 65%)" stopOpacity="0.10" />
+          <stop offset="1"    stopColor="hsl(260 90% 70%)" stopOpacity="0" />
         </linearGradient>
         <linearGradient id="veilB" x1="1" x2="0" y1="0" y2="1">
-          <stop offset="0%"  stopColor="hsl(280 90% 60%)" stopOpacity="0"/>
-          <stop offset="50%" stopColor="hsl(300 90% 65%)" stopOpacity="0.08}/>
-          <stop offset="100%" stopColor="hsl(320 90% 70%)" stopOpacity="0"/>
+          <stop offset="0"    stopColor="hsl(280 90% 60%)" stopOpacity="0" />
+          <stop offset="0.50" stopColor="hsl(300 90% 65%)" stopOpacity="0.08" />
+          <stop offset="1"    stopColor="hsl(320 90% 70%)" stopOpacity="0" />
         </linearGradient>
       </defs>
       <rect x="-820" y="-820" width="1640" height="1640" fill="url(#veilA)" transform="translate(-6,-4) rotate(1.2)"/>
@@ -515,12 +515,12 @@ const HypercubeViewer: React.FC<HypercubeViewerProps> = (props) => {
             </feMerge>
           </filter>
           <radialGradient id="haloGrad" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="white" stopOpacity="0.22"/>
-            <stop offset="100%" stopColor="white" stopOpacity="0"/>
+            <stop offset="0" stopColor="white" stopOpacity="0.22" />
+            <stop offset="1" stopColor="white" stopOpacity="0" />
           </radialGradient>
           <radialGradient id="vignette" cx="50%" cy="50%" r="70%">
-            <stop offset="60%" stopOpacity="0"/>
-            <stop offset="100%" stopOpacity="0.45"/>
+            <stop offset="0.60" stopOpacity="0" />
+            <stop offset="1" stopOpacity="0.45" />
           </radialGradient>
         </defs>
         
