@@ -1,0 +1,5 @@
+{
+  "name": "Interactive Hypercube Model",
+  "description": "A React application that visualizes a 3D projection of a hypercube (tesseract). The model features an outer cube and an inner cube connected at their vertices, with smooth, continuous rotation to showcase its three-dimensional structure.",
+  "requestFramePermissions": []
+}
