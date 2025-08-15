@@ -1,7 +1,14 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+/// <reference types="vitest" />
+import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
 
+// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/<TesserAct>/', // 👈 must match repo name exactly
-})
+  base: '/TesserAct-main/', // 👈 EXACT repo name here (case-sensitive)
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './vitest.setup.ts',
+  },
+});
