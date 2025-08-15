@@ -10,7 +10,9 @@ interface Point2D {
   y: number;
 }
 
-const CarvedObjectViewer: React.FC<CarvedObjectViewerProps> = ({ carvedSlices }) => {
+const CarvedObjectViewer: React.FC<CarvedObjectViewerProps> = ({
+  carvedSlices,
+}) => {
   const [points, setPoints] = useState<{ point: Point2D; color: string }[]>([]);
   const rotationAngles = useRef({ x: 0, y: 0.5 });
   const [isDragging, setIsDragging] = useState(false);
@@ -25,7 +27,7 @@ const CarvedObjectViewer: React.FC<CarvedObjectViewerProps> = ({ carvedSlices })
     all3DPoints.current = carvedSlices.flatMap((slice, sliceIndex) => {
       const hue = 240 * (sliceIndex / totalSlices); // Blue to Red gradient
       const color = `hsl(${hue}, 90%, 65%)`;
-      return slice.map(point => ({ point, color }));
+      return slice.map((point) => ({ point, color }));
     });
   }, [carvedSlices]);
 
@@ -37,17 +39,17 @@ const CarvedObjectViewer: React.FC<CarvedObjectViewerProps> = ({ carvedSlices })
       const cosY = Math.cos(rotationAngles.current.y);
       const sinY = Math.sin(rotationAngles.current.y);
 
-      const projectedPoints = all3DPoints.current.map(p => {
+      const projectedPoints = all3DPoints.current.map((p) => {
         // Rotate around Y axis
         let x = p.point.x * cosY - p.point.z * sinY;
         let z = p.point.x * sinY + p.point.z * cosY;
-        
+
         // Rotate around X axis
         let y = p.point.y * cosX - z * sinX;
         z = p.point.y * sinX + z * cosX;
 
         const perspective = 1.5 / (1.5 - z * 0.5);
-        
+
         return {
           point: {
             x: x * scale * perspective,
@@ -77,7 +79,7 @@ const CarvedObjectViewer: React.FC<CarvedObjectViewerProps> = ({ carvedSlices })
   const handleMouseUp = () => {
     setIsDragging(false);
   };
-  
+
   const handleMouseLeave = () => {
     setIsDragging(false);
   };
@@ -93,7 +95,7 @@ const CarvedObjectViewer: React.FC<CarvedObjectViewerProps> = ({ carvedSlices })
   };
 
   const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
-    zoom.current = Math.max(0.1, Math.min(3, zoom.current + (e.deltaY * -0.001)));
+    zoom.current = Math.max(0.1, Math.min(3, zoom.current + e.deltaY * -0.001));
   };
 
   return (
@@ -113,14 +115,20 @@ const CarvedObjectViewer: React.FC<CarvedObjectViewerProps> = ({ carvedSlices })
       </div>
       <svg width="100%" height="100%" viewBox="-800 -800 1600 1600">
         <defs>
-            <filter id="carvedBloom" x="-40%" y="-40%" width="180%" height="180%">
-                <feGaussianBlur stdDeviation="3" />
-            </filter>
+          <filter id="carvedBloom" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="3" />
+          </filter>
         </defs>
         <g filter="url(#carvedBloom)">
-            {points.map((p, i) => (
-                <circle key={i} cx={p.point.x} cy={p.point.y} r="2.5" fill={p.color} />
-            ))}
+          {points.map((p, i) => (
+            <circle
+              key={i}
+              cx={p.point.x}
+              cy={p.point.y}
+              r="2.5"
+              fill={p.color}
+            />
+          ))}
         </g>
       </svg>
     </div>

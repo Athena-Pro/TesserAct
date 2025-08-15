@@ -5,12 +5,18 @@ import CarvedObjectViewer from './components/CarvedObjectViewer';
 import { ShapeName, polytopes, Point3D } from './lib/polytopes';
 import { DimensionalKeySpec, NO_KEY, TRAINING_W_ONLY } from './lib/security';
 
-export type TrainingEvent = 'try_3d' | 'try_w_denied' | 'acquire_key' | 'try_w_granted' | 'complete' | 'reset';
+export type TrainingEvent =
+  | 'try_3d'
+  | 'try_w_denied'
+  | 'acquire_key'
+  | 'try_w_granted'
+  | 'complete'
+  | 'reset';
 
 const App: React.FC = () => {
   const [shape, setShape] = useState<ShapeName>('Tesseract');
   const [theme, setTheme] = useState<ThemeName>('Cyber');
-  
+
   // Visual effect states
   const [braidEnabled, setBraidEnabled] = useState(true);
   const [braidStrands, setBraidStrands] = useState(4);
@@ -40,7 +46,9 @@ const App: React.FC = () => {
 
   // --- Dimensional Sprite State ---
   const [spriteTraversalEnabled, setSpriteTraversalEnabled] = useState(false);
-  const [spriteDimension, setSpriteDimension] = useState<'X'|'Y'|'Z'|'W'>('W');
+  const [spriteDimension, setSpriteDimension] = useState<'X' | 'Y' | 'Z' | 'W'>(
+    'W',
+  );
   const [spriteSpeed, setSpriteSpeed] = useState(1.0);
 
   // --- New Dimensional Locking & Training State ---
@@ -49,51 +57,77 @@ const App: React.FC = () => {
   const [trainingStep, setTrainingStep] = useState<TrainingEvent>('try_3d');
   const [announcement, setAnnouncement] = useState('');
 
-
-  const trainingTasks = useMemo(() => ([
-    { id: 'try_3d', title: 'Perform a standard 3D rotation (Drag mouse)', done: trainingStep !== 'try_3d' },
-    { id: 'try_w_denied', title: 'Attempt a W-plane rotation (Hold "W" + Drag)', done: trainingStep !== 'try_3d' && trainingStep !== 'try_w_denied' },
-    { id: 'acquire_key', title: 'Acquire Secure Key 🔑', done: hasSecureKey },
-    { id: 'try_w_granted', title: 'Perform a W-plane rotation (Hold "W" + Drag)', done: trainingStep === 'complete' },
-    { id: 'complete', title: 'Dimensional Lock bypassed. Tutorial complete.', done: trainingStep === 'complete' },
-  ]), [hasSecureKey, trainingStep]);
+  const trainingTasks = useMemo(
+    () => [
+      {
+        id: 'try_3d',
+        title: 'Perform a standard 3D rotation (Drag mouse)',
+        done: trainingStep !== 'try_3d',
+      },
+      {
+        id: 'try_w_denied',
+        title: 'Attempt a W-plane rotation (Hold "W" + Drag)',
+        done: trainingStep !== 'try_3d' && trainingStep !== 'try_w_denied',
+      },
+      { id: 'acquire_key', title: 'Acquire Secure Key 🔑', done: hasSecureKey },
+      {
+        id: 'try_w_granted',
+        title: 'Perform a W-plane rotation (Hold "W" + Drag)',
+        done: trainingStep === 'complete',
+      },
+      {
+        id: 'complete',
+        title: 'Dimensional Lock bypassed. Tutorial complete.',
+        done: trainingStep === 'complete',
+      },
+    ],
+    [hasSecureKey, trainingStep],
+  );
 
   const lastMessage = useMemo(() => {
     switch (trainingStep) {
-      case 'try_3d': return 'Welcome. Drag with your mouse to perform a standard 3D rotation.';
-      case 'try_w_denied': return 'Good. Now, hold the "W" key and drag to attempt rotation into the 4th dimension.';
-      case 'acquire_key': return 'Access Denied. Rotation locked. Click the floating key icon 🔑 to acquire credentials.';
-      case 'try_w_granted': return 'Key acquired! Hold "W" and drag again to use your new permissions.';
-      case 'complete': return 'Access Granted! You have successfully rotated in a locked dimension.';
-      default: return '';
+      case 'try_3d':
+        return 'Welcome. Drag with your mouse to perform a standard 3D rotation.';
+      case 'try_w_denied':
+        return 'Good. Now, hold the "W" key and drag to attempt rotation into the 4th dimension.';
+      case 'acquire_key':
+        return 'Access Denied. Rotation locked. Click the floating key icon 🔑 to acquire credentials.';
+      case 'try_w_granted':
+        return 'Key acquired! Hold "W" and drag again to use your new permissions.';
+      case 'complete':
+        return 'Access Granted! You have successfully rotated in a locked dimension.';
+      default:
+        return '';
     }
   }, [trainingStep]);
 
   // Update accessibility announcement when message changes
   useEffect(() => {
     if (lastMessage) {
-        setAnnouncement(lastMessage);
+      setAnnouncement(lastMessage);
     }
   }, [lastMessage]);
 
   const handleTrainingEvent = useCallback((event: TrainingEvent) => {
     if (event === 'reset') {
-        setHasSecureKey(false);
-        setKeySpec(NO_KEY);
-        setTrainingStep('try_3d');
-        setAnnouncement('Training has been reset.');
-        return;
+      setHasSecureKey(false);
+      setKeySpec(NO_KEY);
+      setTrainingStep('try_3d');
+      setAnnouncement('Training has been reset.');
+      return;
     }
-    setTrainingStep(currentStep => {
+    setTrainingStep((currentStep) => {
       if (event === 'try_3d' && currentStep === 'try_3d') return 'try_w_denied';
-      if (event === 'try_w_denied' && currentStep === 'try_w_denied') return 'acquire_key';
-      if (event === 'try_w_granted' && currentStep === 'try_w_granted') return 'complete';
+      if (event === 'try_w_denied' && currentStep === 'try_w_denied')
+        return 'acquire_key';
+      if (event === 'try_w_granted' && currentStep === 'try_w_granted')
+        return 'complete';
       return currentStep;
     });
   }, []);
-  
+
   const handleAcquireKey = useCallback(() => {
-    if(hasSecureKey) return;
+    if (hasSecureKey) return;
     setHasSecureKey(true);
     setKeySpec(TRAINING_W_ONLY);
     handleTrainingEvent('acquire_key');
@@ -110,7 +144,7 @@ const App: React.FC = () => {
 
   const handleSliceCarved = useCallback((points: Point3D[]) => {
     if (points.length > 0) {
-      setCarvedSlices(prev => [...prev, points]);
+      setCarvedSlices((prev) => [...prev, points]);
     }
   }, []);
 
@@ -119,7 +153,10 @@ const App: React.FC = () => {
   }, []);
 
   const handleExportCarvedObject = useCallback(() => {
-    const objContent = carvedSlices.flat().map(p => `v ${p.x.toFixed(4)} ${p.y.toFixed(4)} ${p.z.toFixed(4)}`).join('\n');
+    const objContent = carvedSlices
+      .flat()
+      .map((p) => `v ${p.x.toFixed(4)} ${p.y.toFixed(4)} ${p.z.toFixed(4)}`)
+      .join('\n');
     const blob = new Blob([objContent], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -131,11 +168,13 @@ const App: React.FC = () => {
     URL.revokeObjectURL(url);
   }, [carvedSlices]);
 
-
   return (
-    <div 
+    <div
       className="min-h-screen text-white flex flex-col items-center justify-center p-4 font-sans antialiased overflow-hidden relative"
-      style={{ background: 'radial-gradient(1200px 900px at 50% 50%, #0f1720 0%, #0a0f14 60%, #070a0d 100%)' }}
+      style={{
+        background:
+          'radial-gradient(1200px 900px at 50% 50%, #0f1720 0%, #0a0f14 60%, #070a0d 100%)',
+      }}
     >
       <div role="log" aria-live="polite" className="sr-only">
         {announcement}
@@ -148,15 +187,20 @@ const App: React.FC = () => {
           Simulating kinematic access control for a 4D network.
         </p>
       </header>
-      
+
       {!showCarvedObject && (
         <aside className="absolute right-4 top-4 z-20 w-80 rounded-xl bg-black/60 backdrop-blur p-3 shadow-lg space-y-2">
-          <div className="text-xs uppercase font-bold text-cyan-300">Access Tutorial</div>
+          <div className="text-xs uppercase font-bold text-cyan-300">
+            Access Tutorial
+          </div>
           <div className="text-sm">{lastMessage}</div>
 
           <ul className="text-xs space-y-1 mt-2">
-            {trainingTasks.map(t => (
-              <li key={t.id} className={`flex items-center gap-2 transition-opacity ${t.done ? 'opacity-100' : 'opacity-60'}`}>
+            {trainingTasks.map((t) => (
+              <li
+                key={t.id}
+                className={`flex items-center gap-2 transition-opacity ${t.done ? 'opacity-100' : 'opacity-60'}`}
+              >
                 <span>{t.done ? '✅' : '•'}</span>
                 <span>{t.title}</span>
               </li>
@@ -170,30 +214,24 @@ const App: React.FC = () => {
         onShapeChange={setShape}
         theme={theme}
         onThemeChange={setTheme}
-        
         braidEnabled={braidEnabled}
         onBraidEnabledChange={setBraidEnabled}
         braidStrands={braidStrands}
         onBraidStrandsChange={setBraidStrands}
         braidAmplitude={braidAmplitude}
         onBraidAmplitudeChange={setBraidAmplitude}
-        
         sectorTwist={sectorTwist}
         onSectorTwistChange={setSectorTwist}
-
         enableDataPackage={enableDataPackage}
         onEnableDataPackageChange={setEnableDataPackage}
         packageSpeed={packageSpeed}
         onPackageSpeedChange={setPackageSpeed}
         packageWidth={packageWidth}
         onPackageWidthChange={setPackageWidth}
-
         cellHalo={cellHalo}
         onCellHaloChange={setCellHalo}
-        
         showLegend={showLegend}
         onShowLegendChange={setShowLegend}
-
         glowEnabled={glowEnabled}
         onGlowEnabledChange={setGlowEnabled}
         bloomStrength={bloomStrength}
@@ -204,26 +242,22 @@ const App: React.FC = () => {
         onAdditiveBlendChange={setAdditiveBlend}
         edgeColorLock={edgeColorLock}
         onEdgeColorLockChange={setEdgeColorLock}
-
         isSlicing={isSlicing}
         onIsSlicingChange={setIsSlicing}
         sliceW={sliceW}
         onSliceWChange={setSliceW}
-
         isCarving={isCarving}
         onIsCarvingChange={handleIsCarvingChange}
         showCarvedObject={showCarvedObject}
         onShowCarvedObjectChange={setShowCarvedObject}
         onClearCarvedPath={handleClearCarvedPath}
         onExportCarvedObject={handleExportCarvedObject}
-        
         spriteTraversalEnabled={spriteTraversalEnabled}
         onSpriteTraversalEnabledChange={setSpriteTraversalEnabled}
         spriteDimension={spriteDimension}
         onSpriteDimensionChange={setSpriteDimension}
         spriteSpeed={spriteSpeed}
         onSpriteSpeedChange={setSpriteSpeed}
-        
         hasSecureKey={hasSecureKey}
         keyPlanesAllowed={keySpec.allowed}
         trainingCompleted={trainingStep === 'complete'}
@@ -237,35 +271,27 @@ const App: React.FC = () => {
           <HypercubeViewer
             polytope={polytopes[shape]}
             theme={theme}
-            
             braidEnabled={braidEnabled}
             braidStrands={braidStrands}
             braidAmplitude={braidAmplitude}
-            
             sectorTwist={sectorTwist}
-
             enableDataPackage={enableDataPackage}
             packageSpeed={packageSpeed}
             packageWidth={packageWidth}
             cellHalo={cellHalo}
-            
             showLegend={showLegend}
-            
             glowEnabled={glowEnabled}
             bloomStrength={bloomStrength}
             haloStrength={haloStrength}
             additiveBlend={additiveBlend}
             edgeColorLock={edgeColorLock}
-
             isSlicing={isSlicing}
             sliceW={sliceW}
             isCarving={isCarving}
             onSliceCarved={handleSliceCarved}
-
             spriteTraversalEnabled={spriteTraversalEnabled}
             spriteDimension={spriteDimension}
             spriteSpeed={spriteSpeed}
-
             hasSecureKey={hasSecureKey}
             keySpec={keySpec}
             onTrainingEvent={handleTrainingEvent}

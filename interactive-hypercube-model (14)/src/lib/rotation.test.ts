@@ -5,13 +5,13 @@ import { TRAINING_W_ONLY, NO_KEY } from './security';
 describe('inferPublicIntents', () => {
   it('should generate XY and YZ intents for a standard drag', () => {
     const intents = inferPublicIntents(10, -10, false, NO_KEY);
-    expect(intents.some(i => i.plane === 'XY')).toBe(true);
-    expect(intents.some(i => i.plane === 'YZ')).toBe(true);
+    expect(intents.some((i) => i.plane === 'XY')).toBe(true);
+    expect(intents.some((i) => i.plane === 'YZ')).toBe(true);
   });
 
   it('should not generate any W intents in non-W mode', () => {
     const intents = inferPublicIntents(10, 10, false, TRAINING_W_ONLY);
-    expect(intents.some(i => i.plane.includes('W'))).toBe(false);
+    expect(intents.some((i) => i.plane.includes('W'))).toBe(false);
   });
 
   it('should not generate any W intents if no W planes are public', () => {
