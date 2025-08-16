@@ -87,12 +87,12 @@ const OcclusionVeils: React.FC<{ intensity?:number }> = ({ intensity=0.25 }) => 
       <defs>
         <linearGradient id="veilA" x1="0" x2="1" y1="0" y2="1">
           <stop offset="0%"  stopColor="hsl(210 90% 60%)" stopOpacity="0"/>
-          <stop offset="60%" stopColor="hsl(220 90% 65%)" stopOpacity="0.10}/>
+          <stop offset="60%" stopColor="hsl(220 90% 65%)" stopOpacity="0.10"/>
           <stop offset="100%" stopColor="hsl(260 90% 70%)" stopOpacity="0"/>
         </linearGradient>
         <linearGradient id="veilB" x1="1" x2="0" y1="0" y2="1">
           <stop offset="0%"  stopColor="hsl(280 90% 60%)" stopOpacity="0"/>
-          <stop offset="50%" stopColor="hsl(300 90% 65%)" stopOpacity="0.08}/>
+          <stop offset="50%" stopColor="hsl(300 90% 65%)" stopOpacity="0.08"/>
           <stop offset="100%" stopColor="hsl(320 90% 70%)" stopOpacity="0"/>
         </linearGradient>
       </defs>
